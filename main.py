@@ -6,6 +6,10 @@ STRAIGHT_VALUE = 40
 THREE_OF_A_KIND_VALUE = 30
 
 
+def value_hands(hands: list) -> int:
+    return sum(value_hand(hand) for hand in hands)
+
+
 def value_hand(hand: list) -> int:
     if is_straight_flush(hand):
         return STRAIGHT_FLUSH_VALUE
