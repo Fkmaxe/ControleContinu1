@@ -1,33 +1,46 @@
-STRAIGHT_FLUSH_VALUE = 80
-FOUR_OF_A_KIND_VALUE = 60
-FULL_HOUSE_VALUE = 50
-FLUSH_VALUE = 45
-STRAIGHT_VALUE = 40
-THREE_OF_A_KIND_VALUE = 30
+from collections import Counter, namedtuple
+
+Card = namedtuple("Card", ["suit", "value"])
+
+HEARTS = "Hearts"
+DIAMONDS = "Diamonds"
+CLUBS = "Clubs"
+SPADES = "Spades"
+
+STRAIGHT_FLUSH_POINTS = 80
+FOUR_OF_A_KIND_POINTS = 60
+FULL_HOUSE_POINTS = 50
+FLUSH_POINTS = 45
+STRAIGHT_POINTS = 40
+THREE_OF_A_KIND_POINTS = 30
 
 
-def value_hands(hands: list) -> int:
-    return sum(value_hand(hand) for hand in hands)
+def total_points(hands: list) -> int:
+    return sum(hand_points(hand) for hand in hands)
 
 
-def value_hand(hand: list) -> int:
+def hand_points(hand: list) -> int:
     if is_straight_flush(hand):
-        return STRAIGHT_FLUSH_VALUE
+        return STRAIGHT_FLUSH_POINTS
     if is_four_of_a_kind(hand):
-        return FOUR_OF_A_KIND_VALUE
+        return FOUR_OF_A_KIND_POINTS
     if is_full_house(hand):
-        return FULL_HOUSE_VALUE
+        return FULL_HOUSE_POINTS
     if is_flush(hand):
-        return FLUSH_VALUE
+        return FLUSH_POINTS
     if is_straight(hand):
-        return STRAIGHT_VALUE
+        return STRAIGHT_POINTS
     if is_three_of_a_kind(hand):
-        return THREE_OF_A_KIND_VALUE
+        return THREE_OF_A_KIND_POINTS
     return highest_card_value(hand)
 
 
 def sorted_values(hand: list) -> list:
-    return sorted(card[1] for card in hand)
+    return sorted(card.value for card in hand)
+
+
+def same_value_counts(hand: list) -> list:
+    return sorted(Counter(card.value for card in hand).values())
 
 
 def is_straight_flush(hand: list) -> bool:
@@ -35,17 +48,16 @@ def is_straight_flush(hand: list) -> bool:
 
 
 def is_four_of_a_kind(hand: list) -> bool:
-    values = sorted_values(hand)
-    return values[0] == values[3] or values[1] == values[4]
+    return 4 in same_value_counts(hand)
 
 
 def is_full_house(hand: list) -> bool:
-    return len(set(sorted_values(hand))) == 2
+    return same_value_counts(hand) == [2, 3]
 
 
 def is_flush(hand: list) -> bool:
-    first_suit = hand[0][0]
-    return all(card[0] == first_suit for card in hand)
+    suits = {card.suit for card in hand}
+    return len(suits) == 1
 
 
 def is_straight(hand: list) -> bool:
@@ -55,8 +67,8 @@ def is_straight(hand: list) -> bool:
 
 
 def is_three_of_a_kind(hand: list) -> bool:
-    return hand[0][1] == hand[1][1] == hand[2][1]
+    return 3 in same_value_counts(hand)
 
 
 def highest_card_value(hand: list) -> int:
-    return max(card[1] for card in hand)
+    return max(card.value for card in hand)
