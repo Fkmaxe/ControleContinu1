@@ -2,6 +2,9 @@
 
 def value_hand(hand: list):
     values = sorted(card[1] for card in hand)
+    if values[0] == values[3] or values[1] == values[4]:
+        return 70
+
     if len(set(values)) == 2:
         return 60
 
